@@ -74,4 +74,8 @@ df2.show()
 
 df1.join(df2,["emp_id", "name", "age"],"outer").show()
 
+df1.join(df2,["emp_id", "name", "age"],"inner").show()
+
+df1.join(df2,["emp_id", "name", "age"],"left").show()
+
 

@@ -46,8 +46,53 @@ columns = ["id","name","age"]
 df1 = spark.createDataFrame(data1,columns)
 df1.show()
 
+
+print("AAAAAAAAAAAAAAAAA")
+
+# df1.select([ col(clm).isNull().cast(IntegerType() ).alias(clm) for clm in df1.columns ]).show()
+
+
 df1.select([sum( col(clm).isNull().cast(IntegerType()) ).alias(clm) for clm in df1.columns ]).show()
 
 # trying renaming  *** IMP
 
-df1.select([col(c).alias(c+" REN")  for c in df1.columns ]).show()
+# df1.select([col(c).alias(c.replace("id","KRISHNA")+" REN")  for c in df1.columns ]).show()
+
+#Remove the row with null entires and store them in a new dataframe named df2
+df2 = df1.filter(col("age").isNull())
+df2.show()
+
+
+#create a new dataframe df3
+data2 = [(1,'seatle',82),(2,'london',75),(3,'banglore',60),(4,'boston',90)]
+columns2 = ["id","city","code"]
+
+df3 = spark.createDataFrame(data2,columns2)
+df3.show()
+
+mergedf = df1.join(df3, df1["id"]==df3["id"],"inner").select(df1["id"],"name","age","city","code")
+mergedf.show()
+
+
+#fill the null value with the mean age of students
+#calculate the mean age
+
+print("mean --by using collect")
+meanage = mergedf.select(round(mean("age"))).collect()[0][0]
+print(meanage)
+
+print("mean --by using first")
+
+
+meanage1 = mergedf.select(round(mean("age"))).first()[0]
+print(meanage1)
+
+filldf = mergedf.na.fill({"age":meanage})
+filldf.show()
+
+
+
+#Get the students who are 18 years or older
+filterdf = filldf.filter(col("age")>= 18)
+filterdf.show()
+

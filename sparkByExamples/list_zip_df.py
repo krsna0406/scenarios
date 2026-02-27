@@ -130,4 +130,4 @@ schema=["column1"]
 df=spark.createDataFrame(list(zip(data)),schema=schema)
 df.show()
 
-# print(list(zip(data)))
+print(list(zip(data)))

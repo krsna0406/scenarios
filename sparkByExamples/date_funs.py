@@ -45,3 +45,7 @@ dates = ['2019-07-01 12:01:19.111',
 df = spark.createDataFrame(list( zip(dates)), schema=schema)
 
 df.show(truncate=False)
+
+df.printSchema()
+
+df.withColumn("dateformat",date_format("input_timestamp",'yyyy/MM/dd"')).show()

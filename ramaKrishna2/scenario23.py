@@ -63,5 +63,8 @@ df.show()
 data2 = [(5,), (6,)]
 df2 = spark.createDataFrame(data2, ["product_key"])
 df2.show()
-finaldf = df.join(df2, ["product_key"], "inner").drop("product_key").distinct().filter(col("customer_id") != 2)
+
+joindf=df.join(df2, ["product_key"], "inner")
+joindf.show()
+finaldf = joindf.drop("product_key").distinct().filter(col("customer_id") != 2)
 finaldf.show()
