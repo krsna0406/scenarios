@@ -97,10 +97,12 @@ WHERE s.name != t.name1 OR s.name IS NULL OR t.name1 IS NULL
 """).show()
 
 joindf=sourcedf.join(targetdf, (sourcedf.id== targetdf.id1) ,"outer")
+print("joindf--------")
+joindf.show(truncate=False)
 
-
+print("joindf1--------")
 joindf1=joindf.filter((col("name")!=col("name1")) |col("name").isNull() | col("name1").isNull())
-
+joindf1.show(truncate=False)
 joindf1.withColumn("comment",
                   when((col("id1")).isNull(),"new in source")
                   .when((col("id")).isNull(),"new in target")

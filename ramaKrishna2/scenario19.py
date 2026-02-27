@@ -1,23 +1,9 @@
 """
 
-scenario 31:
-input:
-+----+-----+--------+-----------+
-|col1| col2|    col3|       col4|
-+----+-----+--------+-----------+
-|  m1|m1,m2|m1,m2,m3|m1,m2,m3,m4|
-+----+-----+--------+-----------+
+scenario 19 : FLATTENNING DATA
 
+input:
 expected :
-+-----------+
-|        col|
-+-----------+
-|         m1|
-|      m1,m2|
-|   m1,m2,m3|
-|m1,m2,m3,m4|
-|           |
-+-----------+
 
 """
 
@@ -47,18 +33,26 @@ conf=SparkConf().setAppName("scenario1").setMaster("local[*]")
 sc=SparkContext(conf=conf)
 
 spark=SparkSession.builder.getOrCreate()
-# creating the dataframe
 
-data = [("m1", "m1,m2", "m1,m2,m3", "m1,m2,m3,m4")]
+df= spark.read.format("json").option("multiline","true").load("C:\\app\\zeyoplus\\practice\\mKrishna2\\Datasets\\scen.json")
 
-df = spark.createDataFrame(data, ["col1", "col2", "col3", "col4"])
-df.show()
+df.show(truncate=False)
 
-df1=df.withColumn("col", expr("""
-concat(col1,'-',col2,'-',col3,'-',col4)
-"""))
 
-df1.show()
-df1.withColumn("col", explode(split(col("col"),"-")))\
-    .drop("col1","col2","col3","col4").show(truncate=False)
+df.printSchema()
 
+df1=df.withColumn("dislikes",expr("likeDislike.dislikes"))\
+              .withColumn("likes",expr("likeDislike.likes")) \
+              .withColumn("userAction",expr("likeDislike.userAction")) .drop("likeDislike")\
+
+df1.show(truncate=False)
+df1.printSchema()
+
+df2=df1.withColumn("multiMedia",expr("explode(multiMedia)"))
+df2.show(truncate=False)
+df2.printSchema()
+
+
+df3=df2.select("*","multiMedia.*").drop("multiMedia")
+df3.show(truncate=False)
+df3.printSchema()

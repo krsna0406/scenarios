@@ -78,25 +78,25 @@ df.show()
 
 #SPARK SQL
 
-#
-# df.createOrReplaceTempView("sqldf")
-#
-# spark.sql("""
-# select * from sqldf where status ='dispatched' and orderid in (
-# select orderid from sqldf where status='Ordered'
-# )
-# """).show()
 
-# arrStatus=df.filter("status='Ordered'").collect()
+df.createOrReplaceTempView("sqldf")
 
-# print("arrStatus    ",arrStatus)
+spark.sql("""
+select * from sqldf where status ='dispatched' and orderid in (
+select orderid from sqldf where status='Ordered'
+)
+""").show()
+
+arrStatus=df.filter("status='Ordered'").collect()
+
+print("arrStatus    ",arrStatus)
 
 
 arr= [row[0]  for row in df.filter( col("status") == "Ordered" ).collect()]
 
-# for row in arrStatus:
-#     print(" row items  []: ",row[0])
-#     print(" row items  . : ",row.orderid)
+for row in arrStatus:
+    print(" row items  []: ",row[0])
+    print(" row items  . : ",row.orderid)
 
 #DSL
 df.printSchema()

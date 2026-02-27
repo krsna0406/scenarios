@@ -66,26 +66,34 @@ df = spark.createDataFrame(data, schema=myschema)
 df.show()
 
 from pyspark.sql import Window
-
-print("DSL")
-
-window=Window.partitionBy("sensorid").orderBy("values")
-
-df.withColumn("leadval",lead("values",1).over(window))\
-    .filter(col("leadval").isNotNull())\
-    .withColumn("values",col("leadval").cast(IntegerType())-col("values").cast(IntegerType()))\
-    .drop("leadval").show()
-
-print(" OTHERWAY as expr()")
-
-df.withColumn("leadval",lead("values",1).over(window)) \
-    .filter(col("leadval").isNotNull()) \
-    .withColumn("values",expr(" leadval-values")).drop("leadval").show()
+#
+# print("DSL")
+#
+# window=Window.partitionBy("sensorid").orderBy("values")
+#
+# df.withColumn("leadval",lead("values",1).over(window))\
+#     .filter(col("leadval").isNotNull())\
+#     .withColumn("values",col("leadval").cast(IntegerType())-col("values").cast(IntegerType()))\
+#     .drop("leadval").show()
+#
+# print(" OTHERWAY as expr()")
+#
+# df.withColumn("leadval",lead("values",1).over(window)) \
+#     .filter(col("leadval").isNotNull()) \
+#     .withColumn("values",expr(" leadval-values")).drop("leadval").show()
 
 print("SPARK SQL")
 df.createOrReplaceTempView("sqldf")
+#
+# spark.sql(""" select sensorid ,timestamp,(leadvalue-values) as values from (
+# select * ,lead(values,1) over(PARTITION  by sensorid order by values ) as leadvalue from sqldf
+# )t where leadvalue is not null
+# """).show()
+#
 
-spark.sql(""" select sensorid ,timestamp,(leadvalue-values) as values from (
-select * ,lead(values,1) over(PARTITION  by sensorid order by values ) as leadvalue from sqldf 
-)t where leadvalue is not null
+
+spark.sql("""
+with cte as (
+select * ,lead(values,1) over(PARTITION  by sensorid order by values ) as leadvalue from sqldf )
+select  sensorid,timestamp,leadvalue-values as values from cte where leadvalue is not null
 """).show()

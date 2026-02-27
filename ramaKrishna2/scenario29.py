@@ -76,12 +76,11 @@ df2.show()
 maxdf = df1.agg(max("col").alias("max"))
 maxdf.show()
 
-
-maxdf = df1.agg(max("col").alias("max"))
-maxdf.show()
-
 maxsalary = maxdf.select(col("max")).first()[0]
 print("max val of df1--",maxsalary)
+
+
+print("maxsalary----",maxsalary)
 
 joindf = df1.join(df2, df1["col"] == df2["col1"], "outer").drop("col")
 joindf.show()
