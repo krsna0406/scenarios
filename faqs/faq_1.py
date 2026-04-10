@@ -143,3 +143,20 @@ on e.mgr=m.emp_no
 where e.dept='it'
 order by e.sal desc
 """).show()
+
+
+print("SPARK SQL2 case change")
+spark.sql("""
+select 
+concat('Employee_',e.name) as Employee,
+concat('Manager_',m.name) as Manager,
+ CASE DENSE_RANK() OVER (ORDER BY e.sal ASC)
+        WHEN 1 THEN 'First'
+        WHEN 2 THEN 'Second'
+        WHEN 3 THEN 'Third'
+END AS Sal
+from emp e inner join emp m
+on e.mgr=m.emp_no
+where e.dept='it'
+order by e.sal desc
+""").show()

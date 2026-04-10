@@ -76,7 +76,8 @@ print("average salary of each department")
 dept_avg.show()
 
 # Step 2: Overall average salary
-overall_avg = df.agg(avg("salary").alias("overall_avg")).collect()[0][0]
+overall_avg = df.agg(avg("salary").alias("overall_avg")).collect()[0]['overall_avg']
+# overall_avg = df.agg(avg("salary").alias("overall_avg")).collect()[0][0] can also
 
 print("overall_avg-=======  ",overall_avg)
 # Step 3: Departments earning higher than overall average

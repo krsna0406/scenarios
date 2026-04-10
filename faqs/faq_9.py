@@ -1,5 +1,4 @@
 """
-
 join 2 tables and remove duplicates
 
 input:

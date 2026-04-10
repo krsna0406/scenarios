@@ -2,17 +2,6 @@
 
  Fill nulls with last non-null value above using SQL and Pyspark
 
-
-SELECT
-    Id,
-    LAST_VALUE(coursename IGNORE NULLS)
-    OVER (
-        ORDER BY Id
-        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-    ) AS coursename
-FROM table_name;
-
-
 input:
 
 +---+----------------+
@@ -40,6 +29,18 @@ output:
 |  6|            NULL|Data Engineering|
 +---+----------------+----------------+
 
+
+SQL:
+
+
+SELECT
+    Id,
+    LAST_VALUE(coursename IGNORE NULLS)
+    OVER (
+        ORDER BY Id
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS coursename
+FROM table_name;
 
 
 imp note:

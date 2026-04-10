@@ -1,7 +1,4 @@
 """
-you have customer data like IND,UK,SINGAPORE I need Singapore data first top of the DataFrame
-second India third UK How to order it?
-
 input:
 
 +---------+-------------------+-----------+

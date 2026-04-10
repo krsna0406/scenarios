@@ -35,6 +35,7 @@ Assume table name: upi_transactions
 Step 1: Filter last 30 days
 Step 2: Rank transactions per PAN by amount
 Step 3: Keep Top 3
+
 WITH last_30_days AS (
     SELECT *
     FROM upi_transactions

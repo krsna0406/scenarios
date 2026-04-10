@@ -29,13 +29,17 @@ data2 = [(1,), (None,)]
 
 df1 = spark.createDataFrame(data1, ["id"])
 df2 = spark.createDataFrame(data2, ["id"])
-
+print("DF1")
 df1.show()
+print("DF2")
 df2.show()
 
-
+print("Inner")
 df1.join(df2, "id", "inner").show()
+print("left")
 df1.join(df2, "id", "left").show()
+print("right")
 df1.join(df2, "id", "right").show()
+print("outer")
 df1.join(df2, "id", "outer").show()
 

@@ -37,7 +37,7 @@ product_columns = ["ProductID", "ProductName", "Category", "Price"]
 
 product_df = spark.createDataFrame(product_data, product_columns)
 
-product_df.show()
+
 
 sales_data = [
     (101, 1, 2, "2025-08-01", "North"),
@@ -54,6 +54,7 @@ sales_columns = ["SaleID", "ProductID", "Quantity", "SaleDate", "Region"]
 sales_df = spark.createDataFrame(sales_data, sales_columns)
 
 sales_df.show()
+product_df.show()
 
 print("joined df")
 joindf=sales_df.alias("s").join(product_df.alias("p"),["ProductID"],"inner")

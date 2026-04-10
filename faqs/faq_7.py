@@ -37,6 +37,58 @@ Count how many distinct days each customer purchased.
 If purchase_days == total_days → customer purchased daily.
 
 
+🔴 Step 1: What .collect() returns
+df.select(min("date").alias("min_date"),
+          max("date").alias("max_date")).collect()
+Output:
+[Row(min_date=datetime.date(2025, 9, 1),
+     max_date=datetime.date(2025, 9, 3))]
+🧠 Meaning
+.collect() returns a list
+Each element = a Row object
+Here:
+List has 1 row
+That row has 2 fields
+🔴 Step 2: Access first row
+date_range = df.select(...).collect()[0]
+Now:
+date_range = Row(min_date=2025-09-01, max_date=2025-09-03)
+
+👉 So:
+
+date_range is NOT a list anymore
+It is a Row object (like a dict + object hybrid)
+🔴 Step 3: Access values
+✔️ Method 1 (recommended)
+date_range["max_date"]
+
+👉 Output:
+
+datetime.date(2025, 9, 3)
+✔️ Method 2 (dot notation)
+date_range.max_date
+
+👉 Same result
+
+🧠 Internals (important)
+
+Row behaves like:
+
+✔️ Dictionary → row["col"]
+✔️ Object → row.col
+🔍 Full flow summary
+result = df.select(min("date"), max("date")).collect()
+Step-by-step:
+result = [Row(min_date=..., max_date=...)]   # list
+
+result[0]                                    # Row
+
+result[0]["max_date"]                        # actual value
+
+
+
+
+
 """
 # print(__doc__)
 
@@ -76,7 +128,7 @@ data = [
 ]
 
 df = spark.createDataFrame(data, ["customer_id", "order_id", "order_date"])
-
+df.printSchema()
 df = df.withColumn("order_date", col("order_date").cast("date"))
 
 df.show()
@@ -88,12 +140,19 @@ df.select(
     min("order_date").alias("min_date"),
     max("order_date").alias("max_date")
 ).show()
+
 date_range = df.select(
     min("order_date").alias("min_date"),
     max("order_date").alias("max_date")
 ).collect()[0]
 
+print("collect()")
+print(df.select(
+    min("order_date").alias("min_date"),
+    max("order_date").alias("max_date")
+).collect())
 
+print("collect()[0]")
 print("date_range---",date_range)
 
 # date_range1 = df.select(
