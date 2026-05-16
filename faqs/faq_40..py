@@ -92,3 +92,6 @@ df.select(
     sum(when(col("col2").isNull(),1).otherwise(0)).alias("col2_nulls"),
     sum(when(col("col3").isNull(),1).otherwise(0)).alias("col3_nulls")
 ).show()
+
+print(""" by using df.columns and list comprehension""")
+df.select([ sum((when(col(c).isNull(),1).otherwise(0))).alias(f"{c}_nulls") for c in df.columns]).show()

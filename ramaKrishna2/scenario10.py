@@ -22,6 +22,7 @@ expected :
 |    2|         1000|  31-Oct-2021|
 +-----+-------------+-------------+
 """
+import time
 
 print(__doc__)
 
@@ -58,10 +59,91 @@ data = [
 ]
 df = spark.createDataFrame(data, ["empid", "commissionamt", "monthlastdate"])
 df.show()
+#
+# maxdatedf = df.groupBy(col("empid").alias("empid1")).agg(max("monthlastdate").alias("maxdate"))
+# maxdatedf.show()
+#
+# joindf = df.join(maxdatedf, (df["empid"] == maxdatedf["empid1"]) & (df["monthlastdate"] == maxdatedf["maxdate"]),
+#                  "inner").drop("empid1", "maxdate")
+# joindf.show()
 
-maxdatedf = df.groupBy(col("empid").alias("empid1")).agg(max("monthlastdate").alias("maxdate"))
-maxdatedf.show()
 
-joindf = df.join(maxdatedf, (df["empid"] == maxdatedf["empid1"]) & (df["monthlastdate"] == maxdatedf["maxdate"]),
-                 "inner").drop("empid1", "maxdate")
-joindf.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# revision
+import time
+start=time.time()
+print(" SPARK SQL WINDOW ")
+df.createOrReplaceTempView("sqldf")
+spark.sql("""
+with cte as(
+select *, dense_rank() over (partition by empid order by monthlastdate desc ) rank from sqldf
+)
+select * from cte where rank =1
+""").show()
+end=time.time()
+
+print(f"time taken {end-start}")
+
+print(" SPARK SQL JOIN WITH MAX ")
+print()
+start=time.time()
+
+spark.sql("""
+
+select t1.* from sqldf t1
+join (
+   select empid,max(monthlastdate) as monthlastdate from sqldf group by empid
+) t2
+on t1.monthlastdate=t2.monthlastdate
+
+
+
+""").show()
+
+end=time.time()
+
+print(f"time taken {end-start}")
+
+
+print("SPARK DSL WINDOW")
+
+from pyspark.sql import Window
+
+windowsp=Window.partitionBy("empid").orderBy(col("monthlastdate").desc())
+
+df1= df.withColumn("rank", dense_rank().over(windowsp) ).filter("rank=1").drop("rank")
+
+df1.show()
+
+
+
+print("SPARK DSL WITH MAXDF JOIN")
+
+maxdf=df.groupBy("empid").agg(max("monthlastdate").alias('monthlastdate'))
+maxdf.show()
+
+joindf=df.join(maxdf,["monthlastdate"],'inner')
+
+joindf.select(df["*"]).show()

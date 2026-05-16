@@ -101,8 +101,16 @@ null_percentage = df.select([
     (count(when(col(c).isNull(), c)) / total_rows).alias(c)
     for c in df.columns
 ])
+
+
+
+print()
+print("null percentage")
+null_percentage.show()
 # Collect null percentages to driver
 null_pct_dict = null_percentage.collect()[0].asDict()
+
+print(null_pct_dict)
 # Columns to drop (more than 80% nulls)
 cols_to_drop = [col_name for col_name, pct in null_pct_dict.items() if pct > 0.8]
 print(f"Columns to drop: {cols_to_drop}")

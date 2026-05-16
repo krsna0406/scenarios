@@ -55,27 +55,67 @@ data = [("A", "AA"), ("B", "BB"), ("C", "CC"), ("AA", "AAA"), ("BB", "BBB"), ("C
 
 df = spark.createDataFrame(data, ["child", "parent"])
 df.show()
+#
+# joindf = df.alias("a").join(df.alias("b"), col("a.child") == col("b.parent")).select(
+#     col("a.child").alias("child_a"),
+#     col("a.parent").alias("parent_a"),
+#     col("b.child").alias("child_b"),
+#     col("b.parent").alias("parent_b")
+# )
+# joindf.show()
+#
+# findf = joindf.withColumnRenamed("child_a", "parent").withColumnRenamed("parent_a", "grandparent").withColumnRenamed(
+#     "child_b", "child").drop("parent_b").select("child", "parent", "grandparent")
+#
+# findf.show()
+#
+# # another way
+#
+# df2 = df.withColumnRenamed("child", "child1").withColumnRenamed("parent", "parent1")
+# df2.show()
+#
+# secondjoindf = df.join(df2, col("parent") == col("child1"), "inner")
+# secondjoindf.show()
+#
+# finaldf = secondjoindf.withColumnRenamed("parent1", "grandparent").drop("child1")
+# finaldf.show()
 
-joindf = df.alias("a").join(df.alias("b"), col("a.child") == col("b.parent")).select(
-    col("a.child").alias("child_a"),
-    col("a.parent").alias("parent_a"),
-    col("b.child").alias("child_b"),
-    col("b.parent").alias("parent_b")
-)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#revision
+
+print('SPARK SQL')
+
+df.createOrReplaceTempView("fam")
+spark.sql("""
+select f.* ,g.parent as grandparent from fam f
+join fam g
+on f.parent=g.child
+""").show()
+
+print("SPARK DSL")
+
+df1=df.alias("a")
+df2=df.alias("b")
+
+joindf=df1.join(df2,(col("a.parent")==col("b.child")),"inner")\
+    .withColumn("grandparent", col("b.parent")).select("a.*","grandparent")
+
 joindf.show()
 
-findf = joindf.withColumnRenamed("child_a", "parent").withColumnRenamed("parent_a", "grandparent").withColumnRenamed(
-    "child_b", "child").drop("parent_b").select("child", "parent", "grandparent")
 
-findf.show()
 
-# another way
-
-df2 = df.withColumnRenamed("child", "child1").withColumnRenamed("parent", "parent1")
-df2.show()
-
-secondjoindf = df.join(df2, col("parent") == col("child1"), "inner")
-secondjoindf.show()
-
-finaldf = secondjoindf.withColumnRenamed("parent1", "grandparent").drop("child1")
-finaldf.show()

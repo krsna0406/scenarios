@@ -70,20 +70,67 @@ df.show()
 # df.alias("a").join(   df.alias("b"),(  (col("a.from") == col("b.to")) & ( col("a.to") == col("b.from") ) ),"inner")\
 #         .show()
 
+#
+# # Through SQL
+# df.createOrReplaceTempView("trip")
+# spark.sql("""SELECT r1.from, r1.to, (r1.dist + r2.dist) AS roundtrip_dist
+# FROM trip r1
+# JOIN trip r2 ON r1.from = r2.to AND r1.to = r2.from
+# WHERE r1.from < r1.to
+# """).show()
+#
+#
+# # Through DSL
+# finaldf = df.alias("r1").join(df.alias("r2"),
+#                               (col("r1.from") == col("r2.to")) & (col("r1.to") == col("r2.from"))).where(
+#         col("r1.from") < col("r1.to")).select(col("r1.from"), col("r1.to"),
+#                                               (col("r1.dist") + col("r2.dist")).alias("roundtrip_dist"))
+#
+# finaldf.show()
 
-# Through SQL
-df.createOrReplaceTempView("trip")
-spark.sql("""SELECT r1.from, r1.to, (r1.dist + r2.dist) AS roundtrip_dist
-FROM trip r1
-JOIN trip r2 ON r1.from = r2.to AND r1.to = r2.from
-WHERE r1.from < r1.to
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# revision
+
+print("SPARK SQL")
+
+# self join
+df.createOrReplaceTempView("sqldf")
+spark.sql("""
+select a.from,a.to ,(a.dist+b.dist) as  roundtrip_dist from sqldf a
+join sqldf b
+on a.from=b.to and a.to=b.from 
+where a.from < a.to
 """).show()
 
 
-# Through DSL
-finaldf = df.alias("r1").join(df.alias("r2"),
-                              (col("r1.from") == col("r2.to")) & (col("r1.to") == col("r2.from"))).where(
-        col("r1.from") < col("r1.to")).select(col("r1.from"), col("r1.to"),
-                                              (col("r1.dist") + col("r2.dist")).alias("roundtrip_dist"))
+print("SPARK DSL")
 
-finaldf.show()
+df1=df.alias("a")
+df2=df.alias("b")
+
+
+df1.join(df2,[((col("a.from")== col("b.to")) & (col("a.to")== col("b.from")) )],'inner')\
+        .filter("a.from < a.to")\
+        .withColumn("roundtrip_dist", (col("a.dist")+col("b.dist")))\
+        .select("a.*","roundtrip_dist").drop("a.dist")\
+        .show()
+
+

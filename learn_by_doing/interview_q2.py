@@ -3,6 +3,32 @@ INTERVIEW QUESTION
 1. Group multiple rows into single
 
 SOLVE USING PYSPARK AND SPARK SQL
+
+
+input :
+
++-----------+-------------+---------------+
+|Customer_ID|Customer_Name|       Purchase|
++-----------+-------------+---------------+
+|          1|       Manish|         Mobile|
+|          1|       Manish|Washing Mavhine|
+|          2|        Rahul|            Car|
+|          2|        Rahul|         mobile|
+|          2|        Rahul|         scooty|
+|          3|         Monu|         Scooty|
++-----------+-------------+---------------+
+
+
+output:
+
++-----------+-------------+-------------------------+
+|Customer_ID|Customer_Name|Purchase                 |
++-----------+-------------+-------------------------+
+|1          |Manish       |[Washing Mavhine, Mobile]|
+|2          |Rahul        |[scooty, mobile, Car]    |
+|3          |Monu         |[Scooty]                 |
++-----------+-------------+-------------------------+
+
 """
 
 print(__doc__)

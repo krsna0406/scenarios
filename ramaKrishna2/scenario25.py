@@ -1,7 +1,7 @@
 """
 
 scenario 25 :
-onsider a file with some bad/corrupt data as shown below.How will you handle those and load into spark dataframe
+consider a file with some bad/corrupt data as shown below.How will you handle those and load into spark dataframe
 Note - avoid using filter after reading as DF and try to remove bad data while reading the file itself
 
 input:

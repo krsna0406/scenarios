@@ -18,10 +18,13 @@ input:
 
 
 output:
-emp_id	hire_date	termination_date
-101	2020-01-10	2024-03-15
-102	2021-06-01	NULL
-103	2019-02-20	2022-11-30
++------+----------+----------------+
+|emp_id| hire_date|termination_date|
++------+----------+----------------+
+|   101|2020-01-10|      2024-03-15|
+|   102|2021-06-01|            NULL|
+|   103|2019-02-20|      2022-11-30|
++------+----------+----------------+
 
 
 imp note:
@@ -36,6 +39,77 @@ FROM employee_events
 GROUP BY emp_id;
 
 
+chatgpt:
+
+
+
+🧠 Step-by-step logic
+Step 1: Group by employee
+GROUP BY emp_id
+
+👉 Now we process one employee at a time
+
+Step 2: Pick HIRE date
+CASE WHEN event_type = 'HIRE' THEN event_date END
+
+👉 What this does:
+
+If row is HIRE → return date
+Else → return NULL
+
+Example for emp 101:
+
+event_type	result
+HIRE	2020-01-10
+TERMINATION	NULL
+Step 3: Use MAX()
+MAX(...)
+
+👉 Why MAX?
+
+It ignores NULLs
+Picks the only available date
+
+So:
+👉 MAX(2020-01-10, NULL) = 2020-01-10
+
+Step 4: Same for TERMINATION
+MAX(CASE WHEN event_type = 'TERMINATION' THEN event_date END)
+🔄 Final Output
+emp_id	hire_date	termination_date
+101	2020-01-10	2024-03-15
+102	2021-06-01	NULL
+103	2019-02-20	2022-11-30
+💡 One-line intuition
+
+👉 “Convert rows into columns using CASE, then use MAX to pick the value.”
+
+⚠️ Why MAX works (important interview point)
+Each employee has only one HIRE and one TERMINATION
+So MAX is just a trick to:
+ignore NULLs
+extract the value
+
+
+
+
+
+note:
+
+Step 1: CASE condition for TERMINATION
+CASE WHEN event_type = 'TERMINATION' THEN event_date END
+
+For emp 102:
+
+event_type	result
+HIRE	NULL
+
+👉 Because condition is not satisfied
+
+Step 2: Apply MAX()
+MAX(NULL)
+
+👉 Result = NULL
 
 """
 # print(__doc__)
@@ -79,9 +153,9 @@ df.show()
 result_df = (
     df.groupBy("emp_id")
     .agg(
-        min(when(col("event_type") == "HIRE", col("event_date")))
+        max(when(col("event_type") == "HIRE", col("event_date")))
         .alias("hire_date"),
-        min(when(col("event_type") == "TERMINATION", col("event_date")))
+        max(when(col("event_type") == "TERMINATION", col("event_date")))
         .alias("termination_date")
     )
 )

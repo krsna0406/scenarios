@@ -3,19 +3,25 @@ spark program to calculate the count of employee skills,
 sum of bonus and average of bonus for each employee
 
 input:
-empname	emp_skill	bonus
-a	Java	20
-a	Hql	30
-a	Spark	50
-b	MS	10
-b	Azure	40
 
++-------+---------+-----+
+|empname|emp_skill|bonus|
++-------+---------+-----+
+|      a|     Java|   20|
+|      a|      Hql|   30|
+|      a|    Spark|   50|
+|      b|       MS|   10|
+|      b|    Azure|   40|
++-------+---------+-----+
 output:
++-------+-----------+-----------+---------+
+|empname|skill_count|total_bonus|avg_bonus|
++-------+-----------+-----------+---------+
+|      a|          3|        100|    33.33|
+|      b|          2|         50|     25.0|
++-------+-----------+-----------+---------+
 
-Output:
-empname	skill_count	total_bonus	avg_bonus
-a	3	100	33.33
-b	2	50	25.00
+
 
 
 
@@ -58,6 +64,8 @@ data = [
 ]
 columns = ["empname", "emp_skill", "bonus"]
 df = spark.createDataFrame(data, columns)
+
+df.show()
 result_df = (
     df.groupBy("empname")
     .agg(

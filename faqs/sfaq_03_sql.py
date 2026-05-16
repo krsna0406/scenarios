@@ -1,6 +1,11 @@
 """
 
-I have 2 table call table with country id receiver id and also log details 2nd table with country code Country name now i wanted to know which is domestic call and which is international call so if country id and reciver id is from same country then its domestic and if not then international and
+I have 2 table
+call table with country id receiver id and also log details
+2nd table with country code Country name now i wanted to know which is domestic call
+and which is international call so if country id and reciver id is from same country
+sthen its domestic
+and if not then international and
 also i need to know the percentage of international call
 
 
@@ -8,8 +13,8 @@ Assume two tables.
 
 Table 1: call_logs
 call_id	caller_country_id	receiver_country_id
-Table 2: country
 
+Table 2: country
 | country_id | country_name |
 
 Goal:
@@ -34,6 +39,7 @@ Logic
 
 caller_country_id = receiver_country_id → Domestic
 caller_country_id ≠ receiver_country_id → International
+
 2️⃣ Percentage of International Calls
 SELECT
     ROUND(
@@ -54,7 +60,7 @@ COUNT(*) → total calls
 3️⃣ With Country Names (Join)
 SELECT
     cl.call_id,
-    c1.country_name AS caller_country,
+    c2.country_name AS caller_country,
     c2.country_name AS receiver_country,
     CASE
         WHEN cl.caller_country_id = cl.receiver_country_id

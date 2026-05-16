@@ -147,8 +147,7 @@ Table1
         FROM accounts
         GROUP BY Cust_name
         HAVING
-            SUM(CASE WHEN Account_type = 'Loan' THEN Balances ELSE 0 END)
-          > SUM(CASE WHEN Account_type = 'Savings' THEN Balances ELSE 0 END);
+            SUM(CASE WHEN Account_type = 'Loan' THEN Balances ELSE 0 END) > SUM(CASE WHEN Account_type = 'Savings' THEN Balances ELSE 0 END);
 
 For clarity:
 COUNT(DISTINCT Account_type)

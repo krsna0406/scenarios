@@ -5,6 +5,45 @@ WE HAVE 2 TABLE CUSTOMER AND ORDER TABLE IS GIVEN
 2. WE HAVE TO FIND OUT CUSTOMER WHO HAVE ORDERED
 SOLVE USING PYSPARK AND SPARK SQL
 
+
+
+input:
+
+|Customer_ID|Customer_Name|
++-----------+-------------+
+|          1|       Manish|
+|          2|        Rahul|
+|          3|         Monu|
+|          4|          Ram|
++-----------+-------------+
+
++--------+-----------+
+|Order_ID|Customer_ID|
++--------+-----------+
+|       1|          4|
+|       3|          2|
++--------+-----------+
+
+
+outout:
+
+cutomer who have not ordered
++-----------+-------------+
+|Customer_ID|Customer_Name|
++-----------+-------------+
+|          1|       Manish|
+|          3|         Monu|
++-----------+-------------+
+
+cutomer who have ordered
++-----------+-------------+--------+
+|Customer_ID|Customer_Name|Order_ID|
++-----------+-------------+--------+
+|          2|        Rahul|       3|
+|          4|          Ram|       1|
++-----------+-------------+--------+
+
+
 """
 
 print(__doc__)

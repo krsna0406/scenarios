@@ -90,12 +90,38 @@ df2.show()
 #     .select("emp_id","name","dept_name","salary")\
 #     .show(truncate=False)
 
-print("SPARK SQL")
+# print("SPARK SQL")
+#
+# df1.createOrReplaceTempView("sqldf1")
+# df2.createOrReplaceTempView("sqldf2")
+#
+# spark.sql(""" select * from (
+# select a.*,b.* ,dense_rank() over( partition by dept_id order by salary desc) as rank from sqldf1 a
+# inner join sqldf2 b on a.dept_id=b.dept_id1 ) where rank=2
+# """).select("emp_id","name","dept_name","salary").show(truncate=False)
 
-df1.createOrReplaceTempView("sqldf1")
-df2.createOrReplaceTempView("sqldf2")
 
-spark.sql(""" select * from (
-select a.*,b.* ,dense_rank() over( partition by dept_id order by salary desc) as rank from sqldf1 a 
-inner join sqldf2 b on a.dept_id=b.dept_id1 ) where rank=2
-""").select("emp_id","name","dept_name","salary").show(truncate=False)
+
+
+
+print("SPARK SQL 2222")
+
+df1.createOrReplaceTempView("emp")
+df2.createOrReplaceTempView("dept")
+
+
+spark.sql("""
+
+with cte as (
+select * ,dense_rank() over ( partition by dept_id order by salary) drank from emp
+) ,cte2 as(
+select * from cte where drank=2)
+
+SELECT e.*, d.dept_name
+FROM cte2 e
+JOIN dept d
+ON e.dept_id = d.dept_id1
+
+""").show()
+
+

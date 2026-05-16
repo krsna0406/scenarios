@@ -72,8 +72,11 @@ countrydf = spark.createDataFrame(countrydata,["id","name","min_size","max_size"
 countrydf.show()
 
 #join as family size >minsize and < max size
-
+print("JOIN DF")
 joindf=familydf.join(countrydf,(familydf["family_size"] >= countrydf["min_size"]) & ( familydf["family_size"] <= countrydf["max_size"]) ,"inner")
+
+joindf.show()
+
 joindf1=joindf.select(familydf["name"],familydf["family_size"],countrydf["name"],"min_size","max_size")
 
 joindf1.printSchema()

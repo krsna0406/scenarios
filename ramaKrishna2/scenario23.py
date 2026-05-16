@@ -1,6 +1,9 @@
 """
 
 scenario 23 :
+
+Goal: find customers who purchased all products present in product table.
+
 input:
 
 +-----------+-----------+
@@ -64,7 +67,38 @@ data2 = [(5,), (6,)]
 df2 = spark.createDataFrame(data2, ["product_key"])
 df2.show()
 
-joindf=df.join(df2, ["product_key"], "inner")
-joindf.show()
-finaldf = joindf.drop("product_key").distinct().filter(col("customer_id") != 2)
-finaldf.show()
+
+print("SPARK SQL")
+
+df.createOrReplaceTempView("custdf")
+df2.createOrReplaceTempView("proddf")
+
+
+spark.sql("""
+
+with cte1 as(
+select count(distinct product_key) as total_prod from proddf
+), cte2 as (
+select customer_id,count(product_key) count from custdf group by customer_id )
+
+select customer_id from cte2 where count= (select total_prod from cte1)
+
+
+""").show()
+
+
+print("SPARK DSL")
+
+total_products=df2.select("product_key").distinct().count()
+
+print("total_products===",total_products)
+
+df.groupBy("customer_id").agg(count("product_key").alias("count"))\
+    .filter(col("count")==total_products).select("customer_id").show()
+
+
+
+
+
+
+

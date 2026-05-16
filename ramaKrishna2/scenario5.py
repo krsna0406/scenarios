@@ -96,44 +96,102 @@ df2 = spark.createDataFrame(data2, columns2)
 df1.show()
 print("no of partitions   ",df1.rdd.getNumPartitions())
 df2.show()
+# #
+# # print("   df3--------")
+# # df3=df1.withColumn("salary",lit(1000))
+# # df3.show()
+# #
+# # uniondf=df2.union(df3).orderBy("id")
+# # uniondf.show()
+# #
+# #
+# # df4=uniondf.filter(col("email").contains("@"))
+# #
+# # df4.show()
+# #
+# # # df4.write.partitionBy("salary").save("c://targetloc//")
+# #
 #
-# print("   df3--------")
-# df3=df1.withColumn("salary",lit(1000))
-# df3.show()
 #
-# uniondf=df2.union(df3).orderBy("id")
-# uniondf.show()
+# print("SPARK SQL")
 #
+# df1.createOrReplaceTempView("sqldf1")
+# df2.createOrReplaceTempView("sqldf2")
 #
-# df4=uniondf.filter(col("email").contains("@"))
+# #*** imp
+# #
+# # spark.sql("""
+# # select * from (
+# # select * ,1000 as salary from sqldf1
+# # union
+# # select * from sqldf2) t1
+# # where email like '%@%'
+# # """).show()
 #
-# df4.show()
+# # predicate pushdown
 #
-# # df4.write.partitionBy("salary").save("c://targetloc//")
+# #*** imp
 #
+# spark.sql("""
+# select * ,1000 as salary from sqldf1 where email like '%@%'
+# union
+# select * from sqldf2  where email like '%@%'
+# """).show()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# revision
+print("DF3 ")
+df3=df1.withColumn("salary",lit(1000))
+df3.show()
+print("DF4 ")
+df4=df2.unionAll(df3)
+df4.show()
+
+
+print("filtered df ")
+filtrddf=df4.filter("email like '%@%'")
+filtrddf.show()
 
 print("SPARK SQL")
 
 df1.createOrReplaceTempView("sqldf1")
 df2.createOrReplaceTempView("sqldf2")
 
-#*** imp
-#
-# spark.sql("""
-# select * from (
-# select * ,1000 as salary from sqldf1
-# union
-# select * from sqldf2) t1
-# where email like '%@%'
-# """).show()
 
-# predicate pushdown
-
-#*** imp
 
 spark.sql("""
-select * ,1000 as salary from sqldf1 where email like '%@%'
-union
-select * from sqldf2  where email like '%@%'
+   with cte as (
+   select * ,1000 as salary from sqldf1
+   union 
+   select * from sqldf2 )
+   select * from cte where email like '%@%'  
+   
 """).show()
+
+
+uinput=input("enter any no to exit")

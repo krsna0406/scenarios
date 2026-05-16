@@ -2,7 +2,24 @@
 Delete the latest entry of Duplicates in Employees table(unique records per an Employee)
 
 input:
++---+------+----+------+
+| id|emp_id|name|salary|
++---+------+----+------+
+|  1|   101|   A|  5000|
+|  2|   101|   A|  5000|
+|  3|   102|   B|  6000|
+|  4|   102|   B|  6000|
+|  5|   103|   C|  7000|
++---+------+----+------+
+output:
 
++---+------+----+------+
+| id|emp_id|name|salary|
++---+------+----+------+
+|  1|   101|   A|  5000|
+|  3|   102|   B|  6000|
+|  5|   103|   C|  7000|
++---+------+----+------+
 
 imp note:
 
@@ -40,7 +57,7 @@ WHERE id IN (
     SELECT id
     FROM cte
     WHERE rn = 1
-);
+);  HERE NEED TO GET THE COUNT TO COMPARE
 
 
 SQL:

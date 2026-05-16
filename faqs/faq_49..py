@@ -20,6 +20,16 @@ input:
 |         2|         1|          end|      5.0|
 +----------+----------+-------------+---------+
 
+outpit:
+
++----------+-------------------+
+|machine_id|avg_processing_time|
++----------+-------------------+
+|         0|              0.894|
+|         1|              0.995|
+|         2|              1.456|
++----------+-------------------+
+
 
 note:
 
@@ -128,11 +138,16 @@ df2 = df.groupBy("machine_id","process_id").agg(
     max(when(col("activity_type")=="end",col("timestamp"))).alias("end_time")
 )
 
+df2.show()
 result = df2.withColumn(
     "processing_time",
     col("end_time") - col("start_time")
 )
 
+
+print("processing time df")
+
+result.show()
 final = result.groupBy("machine_id").agg(
     round(avg("processing_time"),3).alias("avg_processing_time")
 )

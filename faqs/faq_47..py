@@ -13,12 +13,24 @@ input:
 |     5|    Eve|        IT| 10000|
 +------+-------+----------+------+
 
+output:
+
++------+-------+-
+
+---------+------+---------------+
+|emp_id|   name|department|salary|dept_avg_salary|
++------+-------+----------+------+---------------+
+|     4|  David|   Finance|  8000|         7000.0|
+|     3|Charlie|        HR|  7000|         6000.0|
+|     5|    Eve|        IT| 10000|         9500.0|
++------+-------+----------+------+---------------+
 
 note:
 
 SQL Solution
 
 SQL Solution 1 — Using Subquery (Most Common)
+
 SELECT *
 FROM employees e
 WHERE salary > (
@@ -26,6 +38,7 @@ WHERE salary > (
     FROM employees
     WHERE department = e.department
 );
+
 Logic
 
 For each employee:

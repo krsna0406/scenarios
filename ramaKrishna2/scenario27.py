@@ -65,10 +65,25 @@ df = spark.createDataFrame(data,["empid","salary","year"])
 
 df.show()
 
-from pyspark.sql import Window
+print("SPARK DSL")
 
+from pyspark.sql import Window
 window=Window.partitionBy("empid").orderBy(col("year").asc())
 
 windf=df.withColumn("prev_salary",lag("salary",1).over(window))
 windf.withColumn("incresalary",expr(""" salary - prev_salary """))\
     .withColumn("incresalary",coalesce("incresalary",lit(0))).drop("prev_salary").show()
+
+
+print("SPARK SQL")
+
+df.createOrReplaceTempView("emp")
+
+spark.sql("""
+
+with cte (
+  select * ,nvl ( lag(salary) over (partition by empid order by year asc ),0)  as prev_salary from emp
+)
+select empid,salary,year,salary-prev_salary as incresalary from cte
+""").show()
+

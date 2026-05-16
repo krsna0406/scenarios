@@ -5,7 +5,41 @@ Asked me to find the duration between these two dates
 
 input:
 
++------+----+------------+--------------+
+|emp_id|name|joining_date|relieving_date|
++------+----+------------+--------------+
+|     1|Ravi|  2020-01-10|    2023-03-15|
+|     2|Raja|  2019-05-01|    2021-06-20|
+|     3|Rama|  2022-02-01|    2024-01-01|
++------+----+------------+--------------+
+
 output:
+
+
+
++------+----+------------+--------------+-------------+
+|emp_id|name|joining_date|relieving_date|duration_days|
++------+----+------------+--------------+-------------+
+|     1|Ravi|  2020-01-10|    2023-03-15|         1160|
+|     2|Raja|  2019-05-01|    2021-06-20|          781|
+|     3|Rama|  2022-02-01|    2024-01-01|          699|
++------+----+------------+--------------+-------------+
+
++------+----+------------+--------------+---------------+
+|emp_id|name|joining_date|relieving_date|duration_months|
++------+----+------------+--------------+---------------+
+|     1|Ravi|  2020-01-10|    2023-03-15|    38.16129032|
+|     2|Raja|  2019-05-01|    2021-06-20|    25.61290323|
+|     3|Rama|  2022-02-01|    2024-01-01|           23.0|
++------+----+------------+--------------+---------------+
+
++------+----+------------+--------------+--------------+
+|emp_id|name|joining_date|relieving_date|duration_years|
++------+----+------------+--------------+--------------+
+|     1|Ravi|  2020-01-10|    2023-03-15|          3.18|
+|     2|Raja|  2019-05-01|    2021-06-20|          2.13|
+|     3|Rama|  2022-02-01|    2024-01-01|          1.92|
++------+----+------------+--------------+--------------+
 
 SQL:
 
@@ -20,19 +54,16 @@ Below are typical PySpark and SQL approaches used in interviews.
 
 1️⃣ Example Table
 emp_id	joining_date	relieving_date
-1	2020-01-10	2023-03-15
-2	2019-05-01	2021-06-20
+1	    2020-01-10	    2023-03-15
+2	    2019-05-01	    2021-06-20
+
 2️⃣ PySpark Solution
+
 Create Sample Data
 from pyspark.sql.functions import *
 
-data = [
-(1,"2020-01-10","2023-03-15"),
-(2,"2019-05-01","2021-06-20")
-]
-
+data = [ (1,"2020-01-10","2023-03-15"), (2,"2019-05-01","2021-06-20") ]
 cols = ["emp_id","joining_date","relieving_date"]
-
 df = spark.createDataFrame(data, cols)
 
 Convert to date type
@@ -128,11 +159,19 @@ df = spark.createDataFrame(data, cols)
 
 df.show()
 
-
+print("schema before casting---")
+df.printSchema()
+print("schema after casting---")
 # 2️⃣ Convert String → Date
 df = df.withColumn("joining_date", to_date("joining_date")) \
     .withColumn("relieving_date", to_date("relieving_date"))
+
+df.printSchema()
+
+
 # 3️⃣ Duration in Days
+
+print(" Duration in Days > datediff ")
 df.withColumn(
     "duration_days",
     datediff("relieving_date","joining_date")
@@ -148,11 +187,16 @@ df.withColumn(
 # |3     |Rama|2022-02-01  |2024-01-01    |699          |
 # +------+----+------------+--------------+-------------+
 # 4️⃣ Duration in Months
+print(" Duration in Months > months_between ")
 df.withColumn(
     "duration_months",
     months_between("relieving_date","joining_date")
 ).show()
 # 5️⃣ Duration in Years
+
+print(" duration_years > months_between /12  ")
+
+
 df.withColumn(
     "duration_years",
     round(months_between("relieving_date","joining_date")/12,2)

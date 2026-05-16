@@ -5,6 +5,30 @@ Find customers who have made a purchase every month for the last six months.
 
 
 input:
++-------+-------+-------------+
+|CUST_ID|PROD_ID|PURCHASE_DATE|
++-------+-------+-------------+
+|    101|      1|   2025-10-05|
+|    101|      2|   2025-11-10|
+|    101|      3|   2025-12-15|
+|    101|      1|   2026-01-20|
+|    101|      2|   2026-02-12|
+|    101|      3|   2026-03-03|
+|    102|      1|   2025-10-02|
+|    102|      2|   2025-11-11|
+|    102|      1|   2026-01-09|
+|    102|      3|   2026-02-18|
+|    102|      1|   2026-03-22|
+|    103|      1|   2025-12-01|
+|    103|      2|   2026-01-05|
+|    103|      3|   2026-02-07|
+|    103|      1|   2026-03-14|
+|    104|      1|   2025-10-03|
+|    104|      2|   2025-10-25|
+|    104|      1|   2025-11-06|
+|    104|      2|   2025-12-08|
+|    104|      3|   2026-01-10|
++-------+-------+-------------+
 
 
 
@@ -94,6 +118,23 @@ So the window becomes:
 
 2025-10-01 to 2026-03-31
 
+
+sql ::: in simple
+
+SELECT CUST_ID
+FROM T_CUST_DETAIL
+WHERE Purchase_Date >= ADD_MONTHS(CURRENT_DATE, -6)
+GROUP BY CUST_ID
+HAVING COUNT(DISTINCT DATE_FORMAT(Purchase_Date, 'yyyy-MM')) = 6;
+
+
+
+
+
+
+
+
+
 """
 # print(__doc__)
 
@@ -126,66 +167,103 @@ from datetime import date
 
 spark = SparkSession.builder.appName("CustomerData").getOrCreate()
 
-# Define schema
-schema = StructType([
-    StructField("CUST_ID", IntegerType(), True),
-    StructField("PROD_ID", IntegerType(), True),
-    StructField("PURCHASE_DATE", DateType(), True)
-])
+# # Define schema
+# schema = StructType([
+#     StructField("CUST_ID", IntegerType(), True),
+#     StructField("PROD_ID", IntegerType(), True),
+#     StructField("PURCHASE_DATE", DateType(), True)
+# ])
+#
+# # Sample data
+# data = [
+#     # ✅ Customer 101 (Qualifies)
+#     (101, 1, date(2025, 10, 5)),
+#     (101, 2, date(2025, 11, 10)),
+#     (101, 3, date(2025, 12, 15)),
+#     (101, 1, date(2026, 1, 20)),
+#     (101, 2, date(2026, 2, 12)),
+#     (101, 3, date(2026, 3, 3)),
+#
+#     # ❌ Customer 102 (Missing December)
+#     (102, 1, date(2025, 10, 2)),
+#     (102, 2, date(2025, 11, 11)),
+#     (102, 1, date(2026, 1, 9)),
+#     (102, 3, date(2026, 2, 18)),
+#     (102, 1, date(2026, 3, 22)),
+#
+#     # ❌ Customer 103 (Only 4 months)
+#     (103, 1, date(2025, 12, 1)),
+#     (103, 2, date(2026, 1, 5)),
+#     (103, 3, date(2026, 2, 7)),
+#     (103, 1, date(2026, 3, 14)),
+#
+#     # ✅ Customer 104 (Multiple purchases per month, still qualifies)
+#     (104, 1, date(2025, 10, 3)),
+#     (104, 2, date(2025, 10, 25)),
+#     (104, 1, date(2025, 11, 6)),
+#     (104, 2, date(2025, 12, 8)),
+#     (104, 3, date(2026, 1, 10)),
+#     (104, 1, date(2026, 2, 15)),
+#     (104, 2, date(2026, 3, 19)),
+# ]
+#
+# # Create DataFrame
+# df = spark.createDataFrame(data, schema)
+#
+# df.show()
+#
+# df_last6 = df.filter(
+#     col("Purchase_Date") >= add_months(trunc(current_date(), "month"), -5)
+# )
+#
+# df_month = df_last6.withColumn(
+#     "purchase_month",
+#     trunc(col("Purchase_Date"), "month")
+# )
+# df_month.show()
+# result = (
+#     df_month.groupBy("CUST_ID")
+#     .agg(countDistinct("purchase_month").alias("month_count"))
+#     .filter(col("month_count") == 6)
+# )
+#
+# result.show()
+#
 
-# Sample data
+
 data = [
-    # ✅ Customer 101 (Qualifies)
-    (101, 1, date(2025, 10, 5)),
-    (101, 2, date(2025, 11, 10)),
-    (101, 3, date(2025, 12, 15)),
-    (101, 1, date(2026, 1, 20)),
-    (101, 2, date(2026, 2, 12)),
-    (101, 3, date(2026, 3, 3)),
-
-    # ❌ Customer 102 (Missing December)
-    (102, 1, date(2025, 10, 2)),
-    (102, 2, date(2025, 11, 11)),
-    (102, 1, date(2026, 1, 9)),
-    (102, 3, date(2026, 2, 18)),
-    (102, 1, date(2026, 3, 22)),
-
-    # ❌ Customer 103 (Only 4 months)
-    (103, 1, date(2025, 12, 1)),
-    (103, 2, date(2026, 1, 5)),
-    (103, 3, date(2026, 2, 7)),
-    (103, 1, date(2026, 3, 14)),
-
-    # ✅ Customer 104 (Multiple purchases per month, still qualifies)
-    (104, 1, date(2025, 10, 3)),
-    (104, 2, date(2025, 10, 25)),
-    (104, 1, date(2025, 11, 6)),
-    (104, 2, date(2025, 12, 8)),
-    (104, 3, date(2026, 1, 10)),
-    (104, 1, date(2026, 2, 15)),
-    (104, 2, date(2026, 3, 19)),
+    ("A", "P1", "2025-09-01"),
+    ("A", "P1", "2025-11-10"),
+    ("A", "P2", "2025-12-05"),
+    ("A", "P3", "2026-01-15"),
+    ("A", "P4", "2026-02-20"),
+    ("A", "P5", "2026-03-01"),
+    ("A", "P6", "2026-04-10"),
+    ("B", "P1", "2026-01-01"),
+    ("B", "P2", "2026-03-01"),
 ]
 
-# Create DataFrame
-df = spark.createDataFrame(data, schema)
+columns = ["CUST_ID", "PROD_ID", "Purchase_Date"]
+
+df = spark.createDataFrame(data, columns)
+
+
+from pyspark.sql.functions import to_date
+df = df.withColumn("Purchase_Date", to_date("Purchase_Date"))
 
 df.show()
 
-df_last6 = df.filter(
-    col("Purchase_Date") >= add_months(trunc(current_date(), "month"), -5)
-)
 
-df_month = df_last6.withColumn(
-    "purchase_month",
-    trunc(col("Purchase_Date"), "month")
-)
-df_month.show()
-result = (
-    df_month.groupBy("CUST_ID")
-    .agg(countDistinct("purchase_month").alias("month_count"))
-    .filter(col("month_count") == 6)
-)
+from pyspark.sql.functions import *
 
-result.show()
+# filter the date older than
+
+fltrdf=df.filter(col('Purchase_Date') > add_months(current_date(),-6))
+fltrdf.show()
+
+
+fltrdf.groupby("CUST_ID").agg( countDistinct( date_format("Purchase_Date",'yyyy-MM') ).alias('count'))\
+    .filter(col("count") >=6 ).show()
+
 
 

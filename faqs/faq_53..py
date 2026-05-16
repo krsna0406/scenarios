@@ -131,13 +131,13 @@ result = joined.filter(col("e.dept")=="it") \
     .withColumn("rn", row_number().over(w)) \
     .withColumn("Employee", concat(lit("Engineer_"), col("e.name"))) \
     .withColumn("Manager", concat(lit("Mgr_"), col("m.name"))) \
-    .withColumn("Sal",
+    .withColumn("salary",
                 when(col("rn")==1,"First")
                 .when(col("rn")==2,"Second")
                 .when(col("rn")==3,"Third")
                 ) \
-    .select("Employee","Manager","Sal") \
-    .orderBy(col("rn").desc())
+     .select("Employee","Manager","salary") \
+     .orderBy(col("rn").desc())
 
 result.show()
 

@@ -64,3 +64,26 @@ df1=df.withColumn("age_group", when( ((col("age") >= 19) & (col("age") <=35)) ,"
               .otherwise("51+")  )
 
 df1.groupby("age_group").agg(count(col("age_group")).alias("count")).show()
+
+
+print("SPARK SQL")
+
+
+
+df.createOrReplaceTempView("sqfdf")
+
+
+spark.sql("""
+with cte as(
+select *, case 
+           when age>=19 and age <= 35 then '19-35'
+           when age>=36 and age <= 50 then '36-50'
+           else '51+' end  as age_group
+ from sqfdf)
+ 
+ select age_group,count(*) as count from cte group by age_group
+
+
+
+
+""").show()

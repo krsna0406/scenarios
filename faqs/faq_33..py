@@ -1,15 +1,21 @@
 """
-input
-Sl No	Full Name
-1	Ram-Kumar_Das
-2	Raj-Kumar_Sahu
-3	Hari-Hara_Mishra
+input :
++-----+----------------+
+|Sl_No|       Full_Name|
++-----+----------------+
+|    1|   Ram-Kumar_Das|
+|    2|  Raj-Kumar_Sahu|
+|    3|Hari-Hara_Mishra|
++-----+----------------+
 
- Out Put
-Sl No	Middle Name
-1	Kumar
-2	Kumar
-3	Hara
+ OutPut :
++-----+-----------+
+|Sl_No|Middle_Name|
++-----+-----------+
+|    1|      Kumar|
+|    2|      Kumar|
+|    3|       Hara|
++-----+-----------+
 
 
 imp note:
@@ -55,6 +61,7 @@ data = [
 
 df = spark.createDataFrame(data, ["Sl_No", "Full_Name"])
 
+df.show()
 # Extract middle name using split
 df_middle = df.withColumn("Middle_Name", split(split(col("Full_Name"), "-")[1], "_")[0]) \
     .select("Sl_No", "Middle_Name")

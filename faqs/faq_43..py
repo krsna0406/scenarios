@@ -4,20 +4,27 @@ input:
 
 pyspark scenario based question 1  SCENARIO
 input:
-id  name     skills
-101 siva     python,C#,pyspark
-102 dinesh  AWS, Azure
-103 Kavi	 Python
++---+------+-----------------+
+| id|  name|           skills|
++---+------+-----------------+
+|101|  siva|python,C#,pyspark|
+|102|dinesh|        AWS,Azure|
+|103|  Kavi|           Python|
++---+------+-----------------+
 
 Output:
 
-id  name     skills
-101 siva     python
-101 siva     C#
-101 siva     pyspark
-102 dinesh	 AWS
-102 dinesh	 Azure
-103 Kavi	 Python
++---+------+-------+
+| id|  name| skills|
++---+------+-------+
+|101|  siva| python|
+|101|  siva|     C#|
+|101|  siva|pyspark|
+|102|dinesh|    AWS|
+|102|dinesh|  Azure|
+|103|  Kavi| Python|
++---+------+-------+
+
 
 note:
 """

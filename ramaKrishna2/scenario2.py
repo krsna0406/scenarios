@@ -73,44 +73,144 @@ myschema = ["orderid","statusdate","status"]
 df = spark.createDataFrame(data,schema=myschema)
 df.show()
 
+#
+# # get the order id which is having status as dispatched and aswell in the order status list.
+#
+# #SPARK SQL
+#
+#
+# df.createOrReplaceTempView("sqldf")
+#
+# spark.sql("""
+# select * from sqldf where status ='dispatched' and orderid in (
+# select orderid from sqldf where status='Ordered'
+# )
+# """).show()
+#
+# arrStatus=df.filter("status='Ordered'").collect()
+#
+# print("arrStatus    ",arrStatus)
+#
+#
+# arr= [row[0]  for row in df.filter( col("status") == "Ordered" ).collect()]
+#
+# for row in arrStatus:
+#     print(" row items  []: ",row[0])
+#     print(" row items  . : ",row.orderid)
+#
+# #DSL
+# df.printSchema()
+# print("SPARK DSL")
+#
+# df.filter( (col("status") == "dispatched") & (col("orderid").isin(*arr)) ).show()
+#
+#
+# #get the
+#
+# # df.filter(
+# #     (col("status") == "dispatched") &
+# #     (col("orderid").isin(
+# #         *[row[0] for row in df.filter(col("status") == "Ordered").select("orderid").collect()]
+# #     ))
+# # )
+#
 
-# get the order id which is having status as dispatched and aswell in the order status list.
-
-#SPARK SQL
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
+# # REVISION
+#
+#
+# df1=df.alias('a')
+# df2=df.alias('b')
+#
+#
+# df.createOrReplaceTempView("sqldf")
+#
+# spark.sql("""
+# select * from sqldf where status ='dispatched' and orderid in (
+# select orderid from sqldf where status='Ordered'
+# )
+# """).show()
+#
+#
+# df.filter("status='Ordered'").show()
+#
+# arrc=df.filter("status='Ordered'").collect()
+# ordrstatus=arrc[0]["status"]
+# print(ordrstatus)
+#
+#
+#
+# # cretae a list eq to select orderid from sqldf where status='Ordered'
+# #imp The * operator unpacks the list into positional arguments
+# arr= [row[0]  for row in df.filter( col("status") == "Ordered" ).collect()]
+#
+# print("kkkkkkkkkkkkkkkkk    ",arr)
+# df.filter( (col("status") == "dispatched") & (col("orderid").isin(*arr)) ).show()
+
+
+# REVISION2
+
+print("SPARK SQL")
 df.createOrReplaceTempView("sqldf")
 
 spark.sql("""
-select * from sqldf where status ='dispatched' and orderid in (
-select orderid from sqldf where status='Ordered'
-)
+select * from sqldf where status='dispatched'
+and orderid in (select orderid from sqldf where status='Ordered')
+
 """).show()
 
-arrStatus=df.filter("status='Ordered'").collect()
 
-print("arrStatus    ",arrStatus)
+# SPARK DSL
 
-
-arr= [row[0]  for row in df.filter( col("status") == "Ordered" ).collect()]
-
-for row in arrStatus:
-    print(" row items  []: ",row[0])
-    print(" row items  . : ",row.orderid)
-
-#DSL
-df.printSchema()
 print("SPARK DSL")
 
-df.filter( (col("status") == "dispatched") & (col("orderid").isin(*arr)) ).show()
+# get the array of orderids where status ='ordered'
+
+list= [ row[0] for row in df.filter(col("status")=='Ordered').select("orderid").collect()]
+
+print(list)
 
 
-#get the
+df.filter(col("status")=='dispatched').filter(col("orderid").isin(list)).show()
 
-# df.filter(
-#     (col("status") == "dispatched") &
-#     (col("orderid").isin(
-#         *[row[0] for row in df.filter(col("status") == "Ordered").select("orderid").collect()]
-#     ))
-# )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

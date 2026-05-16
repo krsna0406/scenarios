@@ -78,34 +78,77 @@ mytargetschema = ["id1","name1"]
 targetdf = spark.createDataFrame(targetdata,schema=mytargetschema)
 targetdf.show()
 
+#
+# #--------------------------Through SQL
+#
+# sourcedf.createOrReplaceTempView("sourcetab")
+# targetdf.createOrReplaceTempView("targettab")
+#
+# print("=================Through SQL==========================")
+# spark.sql("""SELECT COALESCE(s.id, t.id1) AS id,
+#        CASE
+#            WHEN s.name IS NULL THEN 'new in target'
+#            WHEN t.name1 IS NULL THEN 'new in source'
+#            WHEN s.name != t.name1 THEN 'mismatch'
+#        END AS comment
+# FROM sourcetab s
+# FULL OUTER JOIN targettab t ON s.id = t.id1
+# WHERE s.name != t.name1 OR s.name IS NULL OR t.name1 IS NULL
+# """).show()
+#
+# joindf=sourcedf.join(targetdf, (sourcedf.id== targetdf.id1) ,"outer")
+# print("joindf--------")
+# joindf.show(truncate=False)
+#
+# print("joindf1--------")
+# joindf1=joindf.filter((col("name")!=col("name1")) |col("name").isNull() | col("name1").isNull())
+# joindf1.show(truncate=False)
+# joindf1.withColumn("comment",
+#                   when((col("id1")).isNull(),"new in source")
+#                   .when((col("id")).isNull(),"new in target")
+#                   .otherwise("mismatch")
+#                   )\
+#     .withColumn("id",coalesce(col("id"),col("id1"))).drop("id1").show()
 
-#--------------------------Through SQL
 
-sourcedf.createOrReplaceTempView("sourcetab")
-targetdf.createOrReplaceTempView("targettab")
 
-print("=================Through SQL==========================")
-spark.sql("""SELECT COALESCE(s.id, t.id1) AS id,
-       CASE
-           WHEN s.name IS NULL THEN 'new in target'
-           WHEN t.name1 IS NULL THEN 'new in source'
-           WHEN s.name != t.name1 THEN 'mismatch'
-       END AS comment
-FROM sourcetab s
-FULL OUTER JOIN targettab t ON s.id = t.id1
-WHERE s.name != t.name1 OR s.name IS NULL OR t.name1 IS NULL
+print("SPARK DSL")
+
+joindf= sourcedf.join(targetdf,sourcedf["id"]==targetdf["id1"],"outer")
+joindf.show()
+filterdf = joindf.filter(
+    (col("name") != col("name1")) |
+    (col("id").isNull() | col("id1").isNull())
+)
+
+filterdf.show()
+
+
+df3= filterdf.withColumn("comment", \
+                         when(col("id").isNull(), 'New in source') \
+                        .when(col("id1").isNull(), 'New in Target')\
+                         .otherwise("mismatch"))
+
+df3.show()
+
+df3.withColumn("id",coalesce(col("id"),col("id1"))).drop("id1")\
+    .select("id",'comment').show()
+
+
+print("SPARK SQL")
+
+
+sourcedf.createOrReplaceTempView("source")
+targetdf.createOrReplaceTempView("target")
+
+
+spark.sql("""
+
+select coalesce(a.id,b.id1) as id,
+        case    when name is null then 'New in source'
+                when name1 is null then 'New in Target'
+                else 'mismatch'  end as comment
+from source a full outer join target b 
+on a.id=b.id1
+where (a.name != b.name1) or (a.id is null or b.id1 is null)
 """).show()
-
-joindf=sourcedf.join(targetdf, (sourcedf.id== targetdf.id1) ,"outer")
-print("joindf--------")
-joindf.show(truncate=False)
-
-print("joindf1--------")
-joindf1=joindf.filter((col("name")!=col("name1")) |col("name").isNull() | col("name1").isNull())
-joindf1.show(truncate=False)
-joindf1.withColumn("comment",
-                  when((col("id1")).isNull(),"new in source")
-                  .when((col("id")).isNull(),"new in target")
-                  .otherwise("mismatch")
-                  )\
-    .withColumn("id",coalesce(col("id"),col("id1"))).drop("id1").show()

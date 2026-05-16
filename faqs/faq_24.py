@@ -5,6 +5,35 @@ Given a list of characters in PySpark, how do you separate them into alphabets, 
 
 input:
 
++----+
+|char|
++----+
+|   A|
+|   b|
+|   g|
+|   d|
+|   &|
+|   @|
+|   ₹|
+|   %|
+|   1|
+|   2|
+|   3|
+|   4|
++----+
+
+
+output :
+
++-----------------+-----+
+|         category|count|
++-----------------+-----+
+|         alphabet|    4|
+|Special Character|    4|
+|           number|    4|
++-----------------+-----+
+
+
 imp note:
 
 

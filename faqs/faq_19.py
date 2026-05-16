@@ -77,3 +77,31 @@ result = emp.join(
 
 result.show()
 
+print("  trying select df[*]")
+
+result1 = emp.join(
+    mgr,
+    col("emp.manager_id") == col("mgr.emp_id"),
+    "inner"
+).filter(
+    col("emp.salary") > col("mgr.salary")
+).select(
+
+    emp["*"],col("mgr.name").alias("manager_name"),
+    col("mgr.salary").alias("manager_salary")
+
+)
+result1.show()
+
+
+
+print("SPARK SQL ")
+df.createOrReplaceTempView("sqldf")
+
+spark.sql("""
+
+select e.* from sqldf e join sqldf m
+on e.manager_id=m.emp_id
+and e.salary> m.salary 
+
+""").show()

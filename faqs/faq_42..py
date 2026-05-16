@@ -16,6 +16,20 @@ input:
 |2024-09-03| GOOGL| 1300|
 +----------+------+-----+
 
+output:
+
++----------+------+-----+-------------+
+|      date|symbol|price|running_total|
++----------+------+-----+-------------+
+|2024-09-01|  AAPL|  150|          150|
+|2024-09-02|  AAPL|  160|          310|
+|2024-09-03|  AAPL|  170|          480|
+|2024-09-01| GOOGL| 1200|         1200|
+|2024-09-02| GOOGL| 1250|         2450|
+|2024-09-03| GOOGL| 1300|         3750|
++----------+------+-----+-------------+
+
+
 
 note:
 """
@@ -68,10 +82,11 @@ from pyspark.sql.functions import sum, col
 
 w = Window.partitionBy("symbol") \
     .orderBy("date") \
-    .rowsBetween(Window.unboundedPreceding, Window.currentRow)
+  #  .rowsBetween(Window.unboundedPreceding, Window.currentRow)
 
 # 3) Calculate Running Total
 
+print("result")
 
 result = df.withColumn("running_total", sum("price").over(w))
 

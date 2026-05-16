@@ -167,6 +167,8 @@ df_result = df.withColumn(
     ).otherwise(None)
 ).drop("domain_part")
 
-df_result.show(truncate=False)
 
+
+
+df_result.show(truncate=False)
 

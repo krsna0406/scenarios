@@ -47,18 +47,70 @@ spark=SparkSession.builder.getOrCreate()
 inputdf = spark.createDataFrame([("The Social Dilemma",)], ["word"])
 inputdf.show()
 
-# UDF creation ***IMP
-from pyspark.sql.types import StringType
-def revString(inputStr):
-    return " ".join([word[::-1] for word in inputStr.split(" ")])
+# # UDF creation ***IMP
+# from pyspark.sql.types import StringType
+# def revString(inputStr):
+#     return " ".join([word[::-1] for word in inputStr.split(" ")])
+#
+#
+#
+# udffun=udf(revString, StringType())
+#
+#
+# inputdf.withColumn("word",udffun(col("word"))).show()
 
 
 
-udffun=udf(revString, StringType())
 
 
-inputdf.withColumn("word",udffun(col("word"))).show()
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def revword(inputString):
+    return " ".join([ word[::-1]  for word in inputString.split(" ")])
+
+
+revudf=udf(revword,StringType())
+
+inputdf.withColumn("word",revudf(col("word"))).show()
+
+inputdf.explain(True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# revision
 
 

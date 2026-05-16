@@ -70,7 +70,7 @@ data2 = [(1, "Tim", 24, "Comcity"),
 df2 = spark.createDataFrame(data2, ["emp_id", "name", "age", "address"])
 df2.show()
 
-# df1.unionByName(df2,allowMissingColumns=True).show()
+df1.unionByName(df2,allowMissingColumns=True).show()
 
 df1.join(df2,["emp_id", "name", "age"],"outer").show()
 

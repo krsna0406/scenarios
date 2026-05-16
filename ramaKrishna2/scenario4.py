@@ -60,17 +60,99 @@ data = [(1, "Mark Ray", "AB"),
 myschema = ["custid", "custname", "address"]
 df = spark.createDataFrame(data, schema=myschema)
 df.show()
+#
+# # DSL
+# print("SPARK DSL")
+#
+# df.drop_duplicates().groupby(col("custid"),col("custname")).agg(collect_set(col("address")).alias("address")).show(truncate=False)
+#
+#
+# print("SPARK SQL")
+#
+# df.createOrReplaceTempView("sqldf")
+#
+# spark.sql("""
+# select custid,custname,collect_set(address) address from sqldf group by custid,custname
+# """).show(truncate=False)
 
-# DSL
-print("SPARK DSL")
-
-df.drop_duplicates().groupby(col("custid"),col("custname")).agg(collect_set(col("address")).alias("address")).show(truncate=False)
 
 
-print("SPARK SQL")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# revision
+
+
+# print("SAPRK SQL")
+#
+# df.createOrReplaceTempView("sqldf")
+#
+# spark.sql("""
+# select custid,custname,collect_set(address)  as address from sqldf
+# group by custid,custname
+# """).show()
+#
+# print("SPARK DSL")
+#
+#
+# df.groupBy("custid","custname").agg(collect_set("address").alias("address")).show()
+#
+#
+
+
+
+
+
+# revision2
+
+
+print("SAPRK SQL")
+
 
 df.createOrReplaceTempView("sqldf")
 
 spark.sql("""
-select custid,custname,collect_set(address) address from sqldf group by custid,custname
-""").show(truncate=False)
+select custid,custname,collect_set(address) as address  from sqldf
+group by custid,custname
+""").show()
+
+
+print("DSL")
+
+df.groupBy("custid","custname")\
+        .agg(collect_set("address").alias("address")).show()
+
+
+
+
+
+
+
+
+

@@ -44,10 +44,10 @@ ROWS BETWEEN 1 PRECEDING AND CURRENT ROW
 Example
 
 week	salary	2-week sum
-1	100	100
-2	200	300
-3	300	500
-4	400	700
+1	        100	100
+2	        200	300
+3	        300	500
+4	        400	700
 4-Week Window
 ROWS BETWEEN 3 PRECEDING AND CURRENT ROW
 

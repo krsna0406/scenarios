@@ -82,7 +82,18 @@ print("max val of df1--",maxsalary)
 
 print("maxsalary----",maxsalary)
 
+maxdf1 = df1.agg(max("col").alias("max")).collect()
+# maxdf1.show()
+
+print(maxdf1[0]["max"])
+
+
+
 joindf = df1.join(df2, df1["col"] == df2["col1"], "outer").drop("col")
 joindf.show()
 finaldf = joindf.filter(col("col1") != maxsalary).withColumnRenamed("col1", "col").orderBy("col")
 finaldf.show()
+
+
+
+

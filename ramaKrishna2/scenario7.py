@@ -84,16 +84,61 @@ from pyspark.sql import  Window
 # df.withColumn("max_quantity",max("quantity").over(window))\
 #     .filter(col("quantity")==col("max_quantity")).drop("max_quantity").show()
 
-print("DSL")
-window=Window.partitionBy("product_id").orderBy(col("quantity").desc())
+# print("DSL")
+# window=Window.partitionBy("product_id").orderBy(col("quantity").desc())
+#
+# df.withColumn("rank",dense_rank().over(window))\
+#     .filter(col("rank")==1).show()
+#
+# print("SPARK SQL")
+#
+# df.createOrReplaceTempView("sqldf")
+# spark.sql("""select * from(
+# select *, dense_rank() over ( partition by product_id order by quantity desc ) as rank from sqldf) t1
+# where rank=1
+# """).show()
 
-df.withColumn("rank",dense_rank().over(window))\
-    .filter(col("rank")==1).show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# REVISION
+
+
+
+
+print("SAPRK DSL")
+
+
+from pyspark.sql import  Window
+
+winsp=Window.partitionBy("product_id").orderBy(col("quantity").desc())
+
+df2=df.withColumn("dr",dense_rank().over(winsp)).filter("dr=1").drop("dr")
+df2.show()
+
 
 print("SPARK SQL")
 
+
 df.createOrReplaceTempView("sqldf")
-spark.sql("""select * from(
-select *, dense_rank() over ( partition by product_id order by quantity desc ) as rank from sqldf) t1
-where rank=1 
+
+spark.sql("""
+
+with cte as (
+select * ,dense_rank() over ( partition by product_id order by quantity desc) as dr from sqldf)
+select * from cte  where dr=1
+
+
 """).show()

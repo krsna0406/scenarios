@@ -70,23 +70,74 @@ df = spark.createDataFrame(data, ["emp_id", "emp_name", "salary"])
 df.show()
 
 print("BY expr")
+#
+# df.withColumn("grade",expr("""
+# case when salary>= 10000 then 'A'
+# when (salary>= 5000  and salary< 10000) then 'B'
+# else 'C'
+# end
+# """)).show()
+#
+# print("DSL")
+#
+# df.withColumn("grade",when(col("salary")>=10000, 'A').when( ( (col("salary")>5000) & (col("salary")<10000)) ,'B').otherwise('C')).show()
+#
+# print("SPARK SQL ")
+# df.createOrReplaceTempView("sqldf")
+# spark.sql("""
+# select * , case when salary>= 10000 then 'A'
+# when (salary>= 5000  and salary< 10000) then 'B'
+# else 'C'
+# end grade from sqldf
+# """).show()
 
-df.withColumn("grade",expr("""
-case when salary>= 10000 then 'A' 
-when (salary>= 5000  and salary< 10000) then 'B' 
-else 'C'
-end
-""")).show()
 
-print("DSL")
 
-df.withColumn("grade",when(col("salary")>=10000, 'A').when( ( (col("salary")>5000) & (col("salary")<10000)) ,'B').otherwise('C')).show()
 
-print("SPARK SQL ")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#REVISION
+
+
+print("SPARK SQL")
+
 df.createOrReplaceTempView("sqldf")
 spark.sql("""
-select * , case when salary>= 10000 then 'A' 
-when (salary>= 5000  and salary< 10000) then 'B' 
-else 'C'
-end grade from sqldf
+
+select *, case when salary >10000 then 'A' when  salary < 5000 then 'C' else 'B' end as grade from sqldf
+
 """).show()
+
+
+print("SAPRK DSL")
+
+df.withColumn("grade", expr ("case when salary >10000 then 'A' when  salary < 5000 then 'C' else 'B' end")).show()
+

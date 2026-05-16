@@ -1,16 +1,22 @@
 """
 *customers table*
-cust_id     name
-1                 A
-2                 B
-3                 C
-4                 D
++-------+----+
+|cust_id|name|
++-------+----+
+|      1|   A|
+|      2|   B|
+|      3|   C|
+|      4|   D|
++-------+----+
 
 Orders table
-orderid     cust_id
-101              1
-102              2
-103              2
++-------+-------+
+|orderid|cust_id|
++-------+-------+
+|    101|      1|
+|    102|      2|
+|    103|      2|
++-------+-------+
 
 Find customer who have not placed any order in SQL
 

@@ -39,3 +39,11 @@ fnos=fib()
 for i in fnos:
     if i<100:
         print(i,sep=" - ")
+
+
+
+
+
+
+
+

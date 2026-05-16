@@ -51,16 +51,16 @@ Example
 Table before:
 
 id	name	dept	salary
-1	A	IT	5000
-2	A	IT	5000
-3	B	HR	4000
-4	B	HR	4000
+1	A	    IT	    5000
+2	A	    IT	    5000
+3	B	    HR	    4000
+4	B	    HR	    4000
 
 After query:
 
 id	name	dept	salary
-1	A	IT	5000
-3	B	HR	4000
+1	A	    IT	    5000
+3	B	    HR	    4000
 
 Duplicates removed.
 

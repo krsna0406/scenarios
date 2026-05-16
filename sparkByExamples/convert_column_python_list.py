@@ -64,15 +64,35 @@ data = [("James","Smith","USA","CA"),("Michael","Rose","USA","NY"), \
 columns=["firstname","lastname","country","state"]
 df=spark.createDataFrame(data=data,schema=columns)
 df.show()
+
+print()
+print("df.collect()")
 print(df.collect())
+
+
+print("df.rdd.collect()")
+print(df.rdd.collect())
+
+print()
+print()
 
 df1=df.select(df["state"])
 
+print()
+
+print("df1.rdd.collect()")
 print(df1.rdd.collect())
 
+
+print("df1.rdd.map...lambda")
 print(df1.rdd.map(lambda x: x[0]).collect())
 
+
+print("set df1.rdd.map...lambda")
+
 print(set(df1.rdd.map(lambda x: x[0]).collect()))
+
+print("list df1.rdd.map...lambda")
 
 print(list(set(df1.rdd.map(lambda x: x[0]).collect())))
 

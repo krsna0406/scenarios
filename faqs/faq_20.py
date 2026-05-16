@@ -43,3 +43,6 @@ df2 = df.withColumn("row_num", row_number().over(window))
 result = df2.filter("row_num >= 5").drop("row_num")
 
 result.show()
+
+
+

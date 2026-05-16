@@ -93,11 +93,18 @@ df.show()
 
 # Step 2: Extract Month
 df = df.withColumn("month_num", month("order_date"))
+print("df with month")
+
+df.show()
 # Step 3: Use Window + LAG
 w = Window.partitionBy("customer_id").orderBy("order_date")
 
 df2 = df.withColumn("prev_month", lag("month_num").over(w))
 # Step 4: Check Alternate Month Difference
+print("df with previous month")
+
+df2.show()
+
 result = df2.withColumn("diff", col("month_num") - col("prev_month")) \
     .filter(col("diff") == 2) \
     .select("customer_id") \

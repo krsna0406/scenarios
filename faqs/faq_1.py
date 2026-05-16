@@ -108,6 +108,21 @@ rdf.select(concat(lit("Engineer_"),col("e.name")).alias("employee"), \
            ).orderBy(col("sal").desc()).show()
 
 
+# tring other way
+
+print("OTHER WAY BY EXPR")
+
+rdf.selectExpr(
+    "concat('Employee_', e.name) as Employee",
+    "concat('Manager_', m.name) as Manager",
+    """
+    CASE 
+        WHEN rank = 1 THEN 'First'
+        WHEN rank = 2 THEN 'Second'
+        WHEN rank = 3 THEN 'Third'
+        ELSE 'Other'
+    END as sal"""
+).show()
 
 df.createOrReplaceTempView("emp")
 

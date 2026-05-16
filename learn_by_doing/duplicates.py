@@ -1,6 +1,27 @@
 """
 DUPLICATES
 
+
+imput:
+
++---+-------------+
+| id|         name|
++---+-------------+
+|  1|abc@gmail.com|
+|  2|def@gmail.com|
+|  1|abc@gmail.com|
++---+-------------+
+
+
+output:
+
++---+-------------+
+| id|         name|
++---+-------------+
+|  1|abc@gmail.com|
++---+-------------+
+
+
 """
 
 print(__doc__)

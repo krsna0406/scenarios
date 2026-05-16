@@ -138,6 +138,9 @@ segment_ranked = segment.withColumn(
     .when(col("segment")=="Silver",2)
     .when(col("segment")=="Bronze",1)
 )
+
+print('segment_ranked')
+segment_ranked.show()
 # Step 2 — Get highest segment per customer
 w = Window.partitionBy("customer_id").orderBy(col("rank").desc())
 

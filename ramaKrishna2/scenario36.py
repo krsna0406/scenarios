@@ -57,3 +57,5 @@ df = spark.createDataFrame(data,schema=columns)
 df.show()
 # *** imp size()
 df.groupby("sell_date").agg( collect_set(col("product")).alias("products"),size(collect_set(col("product"))).alias("null_sell")).show(truncate=False)
+
+

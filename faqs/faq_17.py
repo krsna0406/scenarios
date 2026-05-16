@@ -2,10 +2,26 @@
 
 
 input:
++------+-------+------+
+|txn_id|user_id|amount|
++------+-------+------+
+|1     |U1     |100   |
+|2     |U1     |200   |
+|3     |U1     |100   |
+|4     |U2     |150   |
+|5     |U2     |150   |
+|6     |U3     |300   |
++------+-------+------+
 
 
 output:
 
++-------+
+|user_id|
++-------+
+|     U2|
+|     U1|
++-------+
 
 imp note:
 
@@ -56,7 +72,22 @@ dup = (
     .filter(col("cnt") > 1)
 )
 
+
+print("duplicate rows")
+dup.show()
 # Step 2: Extract distinct users
 result = dup.select("user_id").distinct()
 
 result.show()
+
+
+print("SPARK SQL")
+
+
+df.createOrReplaceTempView("sqldf")
+
+spark.sql("""
+select user_id,amount,count(*) as count from sqldf 
+group by user_id,amount 
+having count >1 order by user_id
+""").show()

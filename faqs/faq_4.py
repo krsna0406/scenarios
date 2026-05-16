@@ -45,3 +45,6 @@ df2.selectExpr(
 "order_id",
 "customer","items.id","items.price"
 ).show()
+
+
+

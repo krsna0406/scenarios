@@ -1,11 +1,5 @@
 """
 
-INTERVIEW QUESTION
-2 question
-1. WE HAVE TO flatten data from 1 row to multiple row eg . [1,2,3] we need to convert into row wise flattening
-2. WE HAVE TO FIND OUT device pinged or not
-SOLVE USING PYSPARK AND SPARK SQL
-
 """
 
 print(__doc__)
@@ -54,4 +48,26 @@ data=[(1, 'yes',None,None),(2, None,'yes',None),(3, 'No',None,'yes')]
 schema=['customer_id','device_using1','device_using2','device_using3']
 
 df1=spark.createDataFrame(data,schema)
+
+df1.show()
 df1.withColumn('new',coalesce(col('device_using1'),col('device_using2'),col('device_using3'))).show()
+
+
+
+# renaming the columns
+
+
+collist=[  column for column in df1.columns]
+print(collist)
+
+
+
+print("  records  ")
+
+df1.select(*collist).show()
+
+
+
+
+
+

@@ -88,7 +88,6 @@ dffltr.show()
 print("SPARK SQL")
 df.createOrReplaceTempView("sqlpdf")
 
-
 spark.sql("""
 select * from
 (select *, lag(performance_score,1) over(partition by employee_ID order by year) as prev1,
@@ -96,3 +95,15 @@ lag(performance_score,2) over(partition by employee_ID order by year) as prev2 f
 where prev1 is not null and prev2 is not null and 
 prev2 < prev1 and prev1< performance_score
 """).show()
+
+print("BY CTE STYLE")
+
+spark.sql("""
+with cte as(
+select *, lag(performance_score,1) over(partition by employee_ID order by year) as prev1,
+lag(performance_score,2) over(partition by employee_ID order by year) as prev2 from sqlpdf
+)
+select * from cte where prev1 is not null and prev2 is not null and 
+prev2 < prev1 and prev1< performance_score
+""").show()
+

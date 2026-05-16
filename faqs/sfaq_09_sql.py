@@ -22,17 +22,17 @@ dept
 Example data
 
 empid	empname	gender	dept
-1	Amit	M	IT
-2	Riya	F	IT
-3	John	M	HR
-4	Sara	F	HR
-5	Raj	M	IT
+1	    Amit	    M	IT
+2	    Riya	    F	IT
+3	    John	    M	HR
+4	    Sara	    F	HR
+5	    Raj	        M	IT
 
 Expected Output
 
 dept	Total_Male	Total_Female
-IT	2	1
-HR	1	1
+IT	    2	        1
+HR	    1	        1
 SQL Solution (Conditional Aggregation)
 SELECT
     dept,

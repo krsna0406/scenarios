@@ -8,9 +8,23 @@ identify duplicates in the following data using pyspark
 
 
 input:
++---+----+
+| id|name|
++---+----+
+|  1|   A|
+|  2|   B|
+|  1|   A|
++---+----+
 
 
 output:
+
++---+----+---+
+| id|name|cnt|
++---+----+---+
+|  1|   A|  2|
++---+----+---+
+
 
 SQL:
 
@@ -40,6 +54,7 @@ WHERE rn > 1;
 This returns duplicate rows only.
 
 5. Quick Interview Trick
+
 SELECT *
 FROM employees
 GROUP BY id, name
@@ -93,12 +108,14 @@ df.show()
 # Method 1 — Using groupBy
 from pyspark.sql.functions import count
 
+print("duplicate rows")
 duplicates = df.groupBy("id","name") \
     .agg(count("*").alias("cnt")) \
     .filter("cnt > 1")
 
 duplicates.show()
 
+print("actual duplicate rows")
 
 #IMP 3. Show the Actual Duplicate Rows
 duplicate_rows = df.join(
@@ -109,24 +126,4 @@ duplicate_rows = df.join(
 
 duplicate_rows.show()
 
-
-
-# 4. Shorter Interview Solution
-df.groupBy(df.columns).count().filter("count > 1").show()
-
-
-# 5. Alternative Method (Using dropDuplicates)
-# To find duplicates indirectly:
-
-duplicates = df.subtract(df.dropDuplicates())
-duplicates.show()
-
-# with windows function
-
-from pyspark.sql.window import Window
-from pyspark.sql.functions import row_number
-
-w = Window.partitionBy("id","name")
-
-df.withColumn("rn", row_number().over(w)).filter("rn > 1").show()
 

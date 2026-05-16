@@ -36,6 +36,7 @@ states = {"NY":"New York", "CA":"California", "FL":"Florida"}
 broadcastStates = sc.broadcast(states)
 
 
+
 data = [("James","Smith","USA","CA"),
         ("Michael","Rose","USA","NY"),
         ("Robert","Williams","USA","CA"),
@@ -52,7 +53,12 @@ print("getting the broadcasting value")
 #get the broadcast variable
 print(broadcastStates.value)
 
+print("autoBroadcastJoinThreshold   ")
+print(spark.conf.get("spark.sql.autoBroadcastJoinThreshold"))
+print("printing rdd.map values")
+
 print(df.rdd.map(lambda x: (x[0],x[1],x[2],x[3])))
+
 
 def getheDictVale(key):
     return broadcastStates.value.get(key)

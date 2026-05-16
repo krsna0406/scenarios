@@ -66,22 +66,54 @@ data = [
 myschema = ["empid","name","salary"]
 df = spark.createDataFrame(data,schema=myschema)
 df.show()
+#
+# print("WHEN OTHERS DSL")
+#
+# df.withColumn("Designation",when(col("salary")>10000, "manager").otherwise("employee")).show()
+#
+# print("case expression DSL")
+#
+# df.withColumn("Designation",expr("""
+#
+# case when salary >10000 then 'manager' else 'employee' end
+#
+# """)).show()
+#
+#
+# print("SPARK SQL")
+#
+# df.createOrReplaceTempView("sqldf")
+# spark.sql("""select * , case when salary > 10000 then 'manager' else 'employee' end  Designation from sqldf
+#           """ ).show()
 
-print("WHEN OTHERS DSL")
 
-df.withColumn("Designation",when(col("salary")>10000, "manager").otherwise("employee")).show()
 
-print("case expression DSL")
 
-df.withColumn("Designation",expr("""
 
-case when salary >10000 then 'manager' else 'employee' end
 
-""")).show()
 
+
+
+#revision 2
 
 print("SPARK SQL")
 
 df.createOrReplaceTempView("sqldf")
-spark.sql("""select * , case when salary > 10000 then 'manager' else 'employee' end  Designation from sqldf
-          """ ).show()
+
+spark.sql("""  select *   ,
+case when salary >10000 then 'MANAGER' else 'EMPLOYEE' end as Designation
+from sqldf
+""").show()
+
+
+print("SPARK DSL 1")
+
+
+df.withColumn("Designation", expr("case when salary >10000 then 'MANAGER' else 'EMPLOYEE' end as Designation"))\
+    .show()
+
+print("SPARK DSL 2")
+
+df.withColumn("Designation", when(col("salary")>10000, 'MANAGER').otherwise('EMPLOYEE')) \
+    .show()
+

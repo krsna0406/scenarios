@@ -23,7 +23,7 @@ os.environ['JAVA_HOME'] = r'C:\Users\Krishna\.jdks\ms-17.0.16'        #  <----- 
 ######################🔴🔴🔴################################
 l1 = [2, 3, 4, 5]
 l2 = [6, 7, 8, 9]
-# append
+# # append
 # appendlst = l1.append(l2)
 # print(l1)
 
