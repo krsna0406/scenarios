@@ -82,7 +82,7 @@ df.createOrReplaceTempView("emp")
 spark.sql("""
 
 with cte (
-  select * ,nvl ( lag(salary) over (partition by empid order by year asc ),0)  as prev_salary from emp
+  select * ,nvl ( lag(salary) over (partition by empid order by year asc ),salary)  as prev_salary from emp
 )
 select empid,salary,year,salary-prev_salary as incresalary from cte
 """).show()
