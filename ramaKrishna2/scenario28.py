@@ -95,27 +95,82 @@ df.show()
 
 
 
+#
+# #revision
+#
+# print('SPARK SQL')
+#
+# df.createOrReplaceTempView("fam")
+# spark.sql("""
+# select f.* ,g.parent as grandparent from fam f
+# join fam g
+# on f.parent=g.child
+# """).show()
+#
+# print("SPARK DSL")
+#
+# df1=df.alias("a")
+# df2=df.alias("b")
+#
+# joindf=df1.join(df2,(col("a.parent")==col("b.child")),"inner")\
+#     .withColumn("grandparent", col("b.parent")).select("a.*","grandparent")
+#
+# joindf.show()
 
-#revision
 
-print('SPARK SQL')
 
-df.createOrReplaceTempView("fam")
+
+
+
+
+
+
+
+
+#revision 2
+
+
+print("SPARK SQL")
+
+df.createOrReplaceTempView("sqldf")
+
 spark.sql("""
-select f.* ,g.parent as grandparent from fam f
-join fam g
-on f.parent=g.child
+
+select a.*,b.parent as grandparent from sqldf a join sqldf b
+on a.parent= b.child 
+
 """).show()
 
-print("SPARK DSL")
 
-df1=df.alias("a")
-df2=df.alias("b")
+print("SAPRK DSL")
 
-joindf=df1.join(df2,(col("a.parent")==col("b.child")),"inner")\
-    .withColumn("grandparent", col("b.parent")).select("a.*","grandparent")
+
+df1=df.alias('a')
+df2=df.alias('b')
+
+joindf= df1.join(df2,col('a.parent')==col("b.child"),'inner').select("a.*",expr("b.parent as grandparent"))
 
 joindf.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
