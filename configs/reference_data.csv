@@ -1,0 +1,17 @@
+Id,SrcFolderName,SrcFileName,SrcColumns,SrcColumnType
+1,Orders,Orders_data,Row ID,int
+2,Orders,Orders_data,Order ID,string
+3,Orders,Orders_data,Order Date,date
+4,Orders,Orders_data,Ship Date,date
+5,Orders,Orders_data,Ship Mode,string
+6,Orders,Orders_data,Customer ID,string
+7,Orders,Orders_data,Customer Name,string
+8,Orders,Orders_data,Segment,string
+9,Orders,Orders_data,City,string
+10,Orders,Orders_data,State,string
+11,Orders,Orders_data,Country,string
+12,Orders,Orders_data,Sales,double
+13,Orders,Orders_data,Quantity,int
+14,Orders,Orders_data,Profit,double
+15,Returns,Returns_data,Returned,string
+16,Returns,Returns_data,Order ID,string

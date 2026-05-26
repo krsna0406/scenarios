@@ -72,28 +72,56 @@ data2 = [(1,), (2,), (3,), (4,), (5,)]
 df2 = spark.createDataFrame(data2, ["col1"])
 df2.show()
 
+#
+# maxdf = df1.agg(max("col").alias("max"))
+# maxdf.show()
+#
+# maxsalary = maxdf.select(col("max")).first()[0]
+# print("max val of df1--",maxsalary)
+#
+#
+# print("maxsalary----",maxsalary)
+#
+# maxdf1 = df1.agg(max("col").alias("max")).collect()
+# # maxdf1.show()
+#
+# print(maxdf1[0]["max"])
+#
+#
+#
+# joindf = df1.join(df2, df1["col"] == df2["col1"], "outer").drop("col")
+# joindf.show()
+# finaldf = joindf.filter(col("col1") != maxsalary).withColumnRenamed("col1", "col").orderBy("col")
+# finaldf.show()
+#
+#
 
-maxdf = df1.agg(max("col").alias("max"))
+
+
+# REVISION
+
+
+df1.createOrReplaceTempView("sqldf1")
+df2.createOrReplaceTempView("sqldf2")
+
+print("SPARK SQL")
+
+
+spark.sql("""
+
+with cte as (
+ select max(col) as val from sqldf1
+)
+select * from sqldf2 where col1 not in (select val from cte)
+""").show()
+
+print("SPARK DSL")
+
+
+maxdf=df1.withColumn("col",max(col("col")))
+
 maxdf.show()
 
-maxsalary = maxdf.select(col("max")).first()[0]
-print("max val of df1--",maxsalary)
-
-
-print("maxsalary----",maxsalary)
-
-maxdf1 = df1.agg(max("col").alias("max")).collect()
-# maxdf1.show()
-
-print(maxdf1[0]["max"])
-
-
-
-joindf = df1.join(df2, df1["col"] == df2["col1"], "outer").drop("col")
-joindf.show()
-finaldf = joindf.filter(col("col1") != maxsalary).withColumnRenamed("col1", "col").orderBy("col")
-finaldf.show()
-
-
+df2.join(maxdf,df2["col1"]!=maxdf["col"],"inner").select("col1").show()
 
 

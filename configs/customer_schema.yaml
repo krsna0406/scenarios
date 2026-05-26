@@ -1,0 +1,11 @@
+source:
+  path: C:\\Users\\Krishna\\IdeaProjects\\kanna\\configs\\customer_valid.csv
+  format: csv
+  header: true
+
+schema:
+  customer_id: IntegerType
+  customer_name: StringType
+  age: IntegerType
+  salary: DoubleType
+  load_date: DateType
